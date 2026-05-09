@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>BJJ Performance — Anamnese Online</title>
+  <style>
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0d10;
+      --bg2: #15181d;
+      --card: #1c2027;
+      --accent: #FF405C;
+      --accent-2: #ff7a8f;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --border: #262a31;
+      --success: #10b981;
+      --error: #ef4444;
+      --info: #3b82f6;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top, #1a1d24 0%, var(--bg) 60%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 80px;
+      line-height: 1.5;
+    }
+    #app { max-width: 720px; margin: 0 auto; }
+    .fp-header { text-align: center; margin-bottom: 28px; }
+    .fp-brand {
+      display: inline-block; color: var(--accent); font-weight: 800;
+      letter-spacing: .15em; text-transform: uppercase; font-size: .8rem;
+      margin-bottom: 12px;
+    }
+    .fp-header h1 {
+      font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 700; margin-bottom: 6px;
+    }
+    .fp-sub { color: var(--muted); font-size: .9rem; }
+    .fp-progress {
+      max-width: 720px; margin: 0 auto 24px; padding: 12px 0;
+      position: sticky; top: 0; background: var(--bg); z-index: 10;
+    }
+    .fp-progress-bar {
+      height: 6px; background: var(--accent); border-radius: 3px;
+      width: 0%; transition: width .3s ease;
+    }
+    .fp-progress-text {
+      color: var(--muted); font-size: .8rem; margin-top: 6px; text-align: right;
+    }
+    .fp-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.4);
+    }
+    .fp-block-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 12px;
+    }
+    .fp-block-num {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--accent); color: #fff; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .fp-block-header h2 { font-size: 1.25rem; line-height: 1.3; }
+    .fp-block-sub { color: var(--accent-2); font-size: .85rem; margin-top: 2px; }
+    .fp-intro {
+      background: rgba(255,64,92,.08); border-left: 3px solid var(--accent);
+      padding: 12px 14px; border-radius: 6px; margin: 16px 0;
+      color: var(--text); font-size: .92rem;
+    }
+    .fp-fields { display: flex; flex-direction: column; gap: 22px; margin-top: 18px; }
+    .fp-field { display: flex; flex-direction: column; gap: 8px; }
+    .fp-label { font-weight: 600; font-size: .98rem; }
+    .fp-help { color: var(--muted); font-size: .85rem; margin-top: -4px; }
+    .fp-input, .fp-textarea {
+      width: 100%; padding: 11px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg2);
+      color: var(--text); font-size: 1rem; font-family: inherit;
+    }
+    .fp-input:focus, .fp-textarea:focus {
+      outline: none; border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255,64,92,.2);
+    }
+    .fp-textarea { resize: vertical; min-height: 90px; }
+    .fp-radio-group, .fp-check-group {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .fp-radio, .fp-check {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 14px; border-radius: 8px; cursor: pointer;
+      background: var(--bg2); border: 1px solid var(--border);
+      transition: all .2s ease;
+    }
+    .fp-radio:hover, .fp-check:hover { border-color: var(--accent); }
+    .fp-radio input, .fp-check input { margin-top: 3px; accent-color: var(--accent); }
+    .fp-check-aceite {
+      background: rgba(255,64,92,.05); border-color: rgba(255,64,92,.3);
+    }
+    .fp-nav {
+      display: flex; justify-content: space-between; gap: 12px;
+      margin-top: 32px; flex-wrap: wrap;
+    }
+    .fp-btn {
+      padding: 12px 22px; border-radius: 8px; border: none; cursor: pointer;
+      font-size: 1rem; font-weight: 600; font-family: inherit;
+      transition: all .2s ease;
+    }
+    .fp-btn-primary {
+      background: var(--accent); color: #fff; margin-left: auto;
+    }
+    .fp-btn-primary:hover { background: #ff2a48; }
+    .fp-btn-secondary {
+      background: transparent; color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .fp-btn-secondary:hover { color: var(--text); border-color: var(--text); }
+    .fp-error h2 { color: var(--error); margin-bottom: 10px; }
+    .fp-success h2 { color: var(--success); margin-bottom: 10px; }
+    .fp-info h2 { color: var(--info); margin-bottom: 10px; }
+    .fp-muted { color: var(--muted); font-size: .85rem; margin-top: 12px; }
+    @media (max-width: 600px) {
+      .fp-card { padding: 20px 18px; border-radius: 10px; }
+      .fp-block-header h2 { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="fp-card" style="text-align:center; padding:40px;">
+      <div class="fp-brand">BJJ Performance</div>
+      <p class="fp-muted">Carregando anamnese…</p>
+    </div>
+  </div>
+  <script type="module" src="./assets/form-logic.js"></script>
+</body>
+</html>
