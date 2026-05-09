@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>BJJ Performance — Painel do Professor</title>
+  <style>
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0b0d10; --bg2: #15181d; --card: #1c2027;
+      --accent: #FF405C; --accent-2: #ff7a8f;
+      --text: #f3f4f6; --muted: #9ca3af; --border: #262a31;
+      --success: #10b981; --error: #ef4444; --info: #3b82f6;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top, #1a1d24 0%, var(--bg) 60%);
+      color: var(--text); min-height: 100vh; padding: 24px 16px 80px; line-height: 1.5;
+    }
+    #app { max-width: 920px; margin: 0 auto; }
+    .fp-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.4);
+    }
+    .fp-block-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .fp-block-num {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--accent); color: #fff; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .fp-block-header h2 { font-size: 1.25rem; line-height: 1.3; }
+    .fp-block-sub { color: var(--accent-2); font-size: .85rem; margin-top: 2px; }
+    .fp-fields { display: flex; flex-direction: column; gap: 16px; margin-top: 12px; }
+    .fp-field { display: flex; flex-direction: column; gap: 8px; }
+    .fp-label { font-weight: 600; font-size: .98rem; }
+    .fp-input, .fp-textarea {
+      width: 100%; padding: 11px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg2);
+      color: var(--text); font-size: 1rem; font-family: inherit;
+    }
+    .fp-input:focus, .fp-textarea:focus {
+      outline: none; border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255,64,92,.2);
+    }
+    .fp-textarea { resize: vertical; min-height: 120px; font-family: ui-monospace, monospace; font-size: .85rem; }
+    .fp-nav { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+    .fp-btn {
+      padding: 11px 20px; border-radius: 8px; border: none; cursor: pointer;
+      font-size: .95rem; font-weight: 600; font-family: inherit; transition: all .2s;
+    }
+    .fp-btn-primary { background: var(--accent); color: #fff; }
+    .fp-btn-primary:hover { background: #ff2a48; }
+    .fp-btn-secondary {
+      background: transparent; color: var(--muted); border: 1px solid var(--border);
+    }
+    .fp-btn-secondary:hover { color: var(--text); border-color: var(--text); }
+    .fp-filters {
+      display: flex; gap: 8px; margin: 12px 0 18px; flex-wrap: wrap;
+    }
+    .fp-filter {
+      padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+      background: transparent; color: var(--muted); cursor: pointer;
+      text-transform: capitalize; font-size: .85rem; font-family: inherit;
+    }
+    .fp-filter:hover { color: var(--text); }
+    .fp-filter.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .fp-table { display: flex; flex-direction: column; gap: 6px; }
+    .fp-row {
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px;
+      padding: 12px 16px; background: var(--bg2); border-radius: 8px;
+      border: 1px solid var(--border); cursor: pointer; transition: all .2s;
+      align-items: center;
+    }
+    .fp-row:hover { border-color: var(--accent); transform: translateX(2px); }
+    .fp-row-name { font-weight: 600; }
+    .fp-row-st { font-size: .85rem; color: var(--muted); }
+    .fp-row.st-resp .fp-row-st { color: var(--success); }
+    .fp-row.st-pend .fp-row-st { color: var(--accent-2); }
+    .fp-row-date { font-size: .8rem; color: var(--muted); text-align: right; }
+    .fp-bloco-detalhe {
+      margin: 18px 0; padding: 14px 16px; background: var(--bg2);
+      border-radius: 8px; border-left: 3px solid var(--accent);
+    }
+    .fp-bloco-detalhe h3 { color: var(--accent-2); font-size: .95rem; text-transform: capitalize; margin-bottom: 8px; }
+    .fp-resp-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    .fp-resp-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .fp-resp-table td:first-child { color: var(--muted); width: 40%; }
+    .fp-resp-key { color: var(--muted); font-family: ui-monospace, monospace; font-size: .82rem; }
+    .fp-error h2 { color: var(--error); margin-bottom: 10px; }
+    .fp-success h2 { color: var(--success); margin-bottom: 10px; }
+    .fp-muted { color: var(--muted); font-size: .9rem; }
+    .fp-modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,.7);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; z-index: 100;
+    }
+    .fp-modal-card {
+      background: var(--card); border-radius: 12px; padding: 24px;
+      max-width: 720px; width: 100%; max-height: 80vh; overflow: auto;
+    }
+    .fp-modal-card h3 { margin-bottom: 12px; }
+    code { background: var(--bg2); padding: 2px 6px; border-radius: 4px; font-size: .85rem; }
+    @media (max-width: 600px) {
+      .fp-card { padding: 18px; }
+      .fp-row { grid-template-columns: 1fr; gap: 4px; }
+      .fp-row-date { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="fp-card" style="text-align:center;"><p class="fp-muted">Inicializando…</p></div>
+  </div>
+  <script type="module" src="./assets/admin-logic.js"></script>
+</body>
+</html>
