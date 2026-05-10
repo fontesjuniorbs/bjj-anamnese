@@ -17,7 +17,7 @@ import { BLOCKS } from './blocks-config.js';
 // ─── Configuração ───────────────────────────────
 const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'http://localhost:8787'
-  : 'https://bjj-anamnese-api.fontesjuniorbs.workers.dev';
+  : 'https://bjj-anamnese-api.fontesedf.workers.dev';
 
 // ─── Estado global ──────────────────────────────
 const state = {
