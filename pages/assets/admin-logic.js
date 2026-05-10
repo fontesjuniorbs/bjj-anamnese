@@ -15,7 +15,7 @@ import { mapAnamneseToAtleta } from './mapper.js';
 
 const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'http://localhost:8787'
-  : 'https://bjj-anamnese-api.fontesjuniorbs.workers.dev';
+  : 'https://bjj-anamnese-api.fontesedf.workers.dev';
 
 const state = {
   authToken: sessionStorage.getItem('bjj_admin_token') || '',
