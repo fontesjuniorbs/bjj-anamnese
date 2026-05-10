@@ -5,19 +5,54 @@
  * Consumido por form-logic.js no frontend.
  *
  * Operadores de showIf suportados:
- *   { field, equals: 'valor' }       // igualdade
- *   { field, in: ['v1','v2','v3'] }  // verificação por lista
- *   { field, notEquals: 'valor' }    // diferença
+ *   { field, equals: 'valor' }
+ *   { field, in: ['v1','v2','v3'] }
+ *   { field, notEquals: 'valor' }
  *
- * Versão: 1.2.0 (P3: Bloco 9 com follow-ups opcionais — Linha C modificada)
+ * Versão: 2.0.0
+ *   - PAR-Q+ promovido a Bloco 1 (gate de prontidão antes do questionário longo)
+ *   - Demais blocos renumerados em cadeia
+ *   - ACSM 2018 mantido após Lesões/Suplementação (contexto clínico complementar)
  */
 
 export const BLOCKS = [
 
-  // BLOCO 1 — Identificação
+  // BLOCO 1 — PAR-Q+ (gate de prontidão, vem primeiro)
   {
-    id: 'bloco01_identificacao',
+    id: 'bloco01_parq',
     numero: 1,
+    titulo: 'PAR-Q+ (Questionário de Prontidão para Atividade Física)',
+    obrigatorio: true,
+    intro: 'Antes de qualquer outra pergunta, precisamos confirmar que você pode iniciar o programa com segurança. Responda com sinceridade absoluta. Qualquer SIM em pergunta crítica não significa impedimento, apenas que precisamos de uma camada extra de cuidado.',
+    fields: [
+      { id: 'parq_p1_cardiaco', label: 'Algum médico já lhe disse que você possui um problema cardíaco e que só deveria realizar atividade física recomendada por um médico?', tipo: 'radio', obrigatorio: true, opcoes: [
+        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
+      ]},
+      { id: 'parq_p2_dor_peito', label: 'Você sente dor no peito quando realiza atividade física?', tipo: 'radio', obrigatorio: true, opcoes: [
+        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
+      ]},
+      { id: 'parq_p3_tontura', label: 'No último mês, você sentiu tontura ao se levantar ou perdeu a consciência?', tipo: 'radio', obrigatorio: true, opcoes: [
+        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
+      ]},
+      { id: 'parq_p4_doenca_cronica', label: 'Possui alguma doença crônica diagnosticada (hipertensão, diabetes, asma, etc.)?', tipo: 'radio', obrigatorio: true, opcoes: [
+        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
+      ]},
+      { id: 'parq_p5_medicacao', label: 'Toma medicamentos prescritos atualmente?', tipo: 'radio', obrigatorio: true, opcoes: [
+        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
+      ]},
+      { id: 'parq_p6_musculoesqueletico', label: 'Possui algum problema ósseo, articular ou muscular agravado por exercício?', tipo: 'radio', obrigatorio: true, opcoes: [
+        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
+      ]},
+      { id: 'parq_p7_supervisao', label: 'Algum profissional de saúde recomendou que você só pratique exercícios sob supervisão?', tipo: 'radio', obrigatorio: true, opcoes: [
+        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
+      ]},
+    ],
+  },
+
+  // BLOCO 2 — Identificação
+  {
+    id: 'bloco02_identificacao',
+    numero: 2,
     titulo: 'Identificação',
     obrigatorio: true,
     intro: 'Estes dados são confidenciais e usados apenas pelo Prof. Fontes Júnior para sua avaliação.',
@@ -30,16 +65,17 @@ export const BLOCKS = [
         { value: 'feminino', label: 'Feminino' },
       ]},
       { id: 'email', label: 'E-mail', tipo: 'email', obrigatorio: false, maxLength: 120 },
-      { id: 'telefone', label: 'Telefone / WhatsApp', tipo: 'tel', obrigatorio: false, maxLength: 30 },
+      { id: 'telefone', label: 'Telefone / WhatsApp', tipo: 'tel', obrigatorio: false, maxLength: 30, ajuda: 'Pré-preenchido a partir do cadastro do seu treinador. Confirme ou ajuste se necessário.' },
       { id: 'cidade', label: 'Cidade', tipo: 'text', obrigatorio: false, maxLength: 80 },
       { id: 'estado', label: 'Estado (UF)', tipo: 'text', obrigatorio: false, maxLength: 2 },
       { id: 'profissao', label: 'Profissão / ocupação principal', tipo: 'text', obrigatorio: false, maxLength: 80 },
     ],
   },
-  // BLOCO 2 — Antropometria
+
+  // BLOCO 3 — Antropometria
   {
-    id: 'bloco02_antropometria',
-    numero: 2,
+    id: 'bloco03_antropometria',
+    numero: 3,
     titulo: 'Antropometria',
     subtitulo: 'Medidas autorrelatadas',
     obrigatorio: false,
@@ -57,10 +93,10 @@ export const BLOCKS = [
     ],
   },
 
-  // BLOCO 3 — Histórico de BJJ
+  // BLOCO 4 — Histórico de BJJ
   {
-    id: 'bloco03_bjj',
-    numero: 3,
+    id: 'bloco04_bjj',
+    numero: 4,
     titulo: 'Histórico de Jiu-Jitsu',
     obrigatorio: true,
     fields: [
@@ -88,10 +124,11 @@ export const BLOCKS = [
         showIf: { field: 'competeAtualmente', in: ['sim', 'pretendo'] } },
     ],
   },
-  // BLOCO 4 — Força e Condicionamento
+
+  // BLOCO 5 — Força e Condicionamento
   {
-    id: 'bloco04_fc',
-    numero: 4,
+    id: 'bloco05_fc',
+    numero: 5,
     titulo: 'Força e Condicionamento',
     obrigatorio: true,
     fields: [
@@ -122,10 +159,10 @@ export const BLOCKS = [
     ],
   },
 
-  // BLOCO 5 — Disponibilidade
+  // BLOCO 6 — Disponibilidade
   {
-    id: 'bloco05_disponibilidade',
-    numero: 5,
+    id: 'bloco06_disponibilidade',
+    numero: 6,
     titulo: 'Disponibilidade de tempo',
     obrigatorio: true,
     intro: 'Marque os dias e horários em que você consegue treinar com regularidade.',
@@ -155,10 +192,11 @@ export const BLOCKS = [
       ]},
     ],
   },
-  // BLOCO 6 — Equipamentos
+
+  // BLOCO 7 — Equipamentos
   {
-    id: 'bloco06_equipamentos',
-    numero: 6,
+    id: 'bloco07_equipamentos',
+    numero: 7,
     titulo: 'Local e equipamentos',
     obrigatorio: true,
     fields: [
@@ -185,10 +223,10 @@ export const BLOCKS = [
     ],
   },
 
-  // BLOCO 7 — Lesões
+  // BLOCO 8 — Lesões
   {
-    id: 'bloco07_lesoes',
-    numero: 7,
+    id: 'bloco08_lesoes',
+    numero: 8,
     titulo: 'Histórico de lesões',
     obrigatorio: true,
     intro: 'Inclua tudo que possa influenciar a prescrição: lesões antigas, dores recorrentes, cirurgias.',
@@ -219,10 +257,11 @@ export const BLOCKS = [
       { id: 'restricoesMedicas', label: 'Restrições médicas / movimentos que evita', tipo: 'textarea', obrigatorio: false, maxLength: 500 },
     ],
   },
-  // BLOCO 8 — Suplementação e medicação
+
+  // BLOCO 9 — Suplementação e medicação
   {
-    id: 'bloco08_suplementacao',
-    numero: 8,
+    id: 'bloco09_suplementacao',
+    numero: 9,
     titulo: 'Suplementação e medicação',
     obrigatorio: true,
     fields: [
@@ -247,14 +286,14 @@ export const BLOCKS = [
     ],
   },
 
-  // BLOCO 9 — Recursos ergogênicos hormonais (P3 - Linha C modificada)
+  // BLOCO 10 — Recursos ergogênicos hormonais
   {
-    id: 'bloco09_ergogenicos',
-    numero: 9,
+    id: 'bloco10_ergogenicos',
+    numero: 10,
     titulo: 'Recursos ergogênicos hormonais',
     subtitulo: 'Confidencial e não-judicativo',
     obrigatorio: true,
-    intro: 'Esta seção é absolutamente confidencial e não-judicativa. As informações são usadas exclusivamente para calibrar volume, intensidade e progressão da sua periodização de forma segura. Nenhum dado é compartilhado fora desta plataforma. Apenas a primeira pergunta é obrigatória — os campos seguintes ajudam a personalizar melhor seu treino, mas todos são opcionais.',
+    intro: 'Esta seção é absolutamente confidencial e não-judicativa. As informações são usadas exclusivamente para calibrar volume, intensidade e progressão da sua periodização de forma segura. Nenhum dado é compartilhado fora desta plataforma. Apenas a primeira pergunta é obrigatória, os campos seguintes ajudam a personalizar melhor seu treino, mas todos são opcionais.',
     fields: [
       {
         id: 'usoErgogenicosHormonais',
@@ -347,10 +386,11 @@ export const BLOCKS = [
       },
     ],
   },
-  // BLOCO 10 — Nutrição e estilo de vida
+
+  // BLOCO 11 — Nutrição e estilo de vida
   {
-    id: 'bloco10_nutricao',
-    numero: 10,
+    id: 'bloco11_nutricao',
+    numero: 11,
     titulo: 'Nutrição e estilo de vida',
     obrigatorio: true,
     fields: [
@@ -388,37 +428,6 @@ export const BLOCKS = [
     ],
   },
 
-  // BLOCO 11 — PAR-Q+
-  {
-    id: 'bloco11_parq',
-    numero: 11,
-    titulo: 'PAR-Q+ (Questionário de Prontidão para Atividade Física)',
-    obrigatorio: true,
-    intro: 'Responda com sinceridade. Qualquer SIM será analisado individualmente — não significa impedimento ao treino.',
-    fields: [
-      { id: 'parq_p1_cardiaco', label: 'Algum médico já lhe disse que você possui um problema cardíaco e que só deveria realizar atividade física recomendada por um médico?', tipo: 'radio', obrigatorio: true, opcoes: [
-        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
-      ]},
-      { id: 'parq_p2_dor_peito', label: 'Você sente dor no peito quando realiza atividade física?', tipo: 'radio', obrigatorio: true, opcoes: [
-        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
-      ]},
-      { id: 'parq_p3_tontura', label: 'No último mês, você sentiu tontura ao se levantar ou perdeu a consciência?', tipo: 'radio', obrigatorio: true, opcoes: [
-        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
-      ]},
-      { id: 'parq_p4_doenca_cronica', label: 'Possui alguma doença crônica diagnosticada (hipertensão, diabetes, asma, etc.)?', tipo: 'radio', obrigatorio: true, opcoes: [
-        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
-      ]},
-      { id: 'parq_p5_medicacao', label: 'Toma medicamentos prescritos atualmente?', tipo: 'radio', obrigatorio: true, opcoes: [
-        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
-      ]},
-      { id: 'parq_p6_musculoesqueletico', label: 'Possui algum problema ósseo, articular ou muscular agravado por exercício?', tipo: 'radio', obrigatorio: true, opcoes: [
-        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
-      ]},
-      { id: 'parq_p7_supervisao', label: 'Algum profissional de saúde recomendou que você só pratique exercícios sob supervisão?', tipo: 'radio', obrigatorio: true, opcoes: [
-        { value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' },
-      ]},
-    ],
-  },
   // BLOCO 12 — ACSM 2018
   {
     id: 'bloco12_acsm',
@@ -443,7 +452,7 @@ export const BLOCKS = [
     ],
   },
 
-  // BLOCO 13 — RWLQ (apenas para quem compete e faz corte de peso)
+  // BLOCO 13 — RWLQ
   {
     id: 'bloco13_rwlq',
     numero: 13,
@@ -495,7 +504,8 @@ export const BLOCKS = [
       ], showIf: { field: 'rwlq_p1_compete_categoria', equals: 'sim' } },
     ],
   },
-  // BLOCO 14 — LEAF-Q (Atletas mulheres)
+
+  // BLOCO 14 — LEAF-Q
   {
     id: 'bloco14_leafq',
     numero: 14,
@@ -545,7 +555,7 @@ export const BLOCKS = [
     ],
   },
 
-  // BLOCO 15 — PSQI (qualidade do sono)
+  // BLOCO 15 — PSQI
   {
     id: 'bloco15_psqi',
     numero: 15,
@@ -582,6 +592,7 @@ export const BLOCKS = [
       ]},
     ],
   },
+
   // BLOCO 16 — Objetivos
   {
     id: 'bloco16_objetivos',
