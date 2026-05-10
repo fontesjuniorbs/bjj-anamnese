@@ -9,7 +9,8 @@
  * - Valida campos obrigatórios
  * - Submete via POST /api/anamnese/responder/:token
  *
- * Versão: 1.0.0
+ * Versão: 1.1.0 (fix: applyShowIfRules guard contra delete em undefined)
+ * Build:   2026-05-10 (correção do typo de domínio + correção do TypeError no Bloco 3+)
  */
 
 import { BLOCKS } from './blocks-config.js';
@@ -33,6 +34,7 @@ const state = {
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
+  console.log('[BJJ Anamnese] form-logic.js v1.1.0 carregado');
   const params = new URLSearchParams(location.search);
   state.token = params.get('t');
   state.isDev = params.get('dev') === '1';
@@ -148,7 +150,7 @@ function showBlock(idx) {
   const next = document.createElement('button');
   next.type = 'button';
   next.className = 'fp-btn fp-btn-primary';
-  next.textContent = idx === BLOCKS.length - 1 ? 'Enviar anamnese' : 'Avançar →';
+  next.textContent = idx === BLOCKS.length - 1 ? 'Enviar anamnese' : 'Avançar ←’';
   next.addEventListener('click', () => onAdvance(block, fieldsContainer));
   nav.appendChild(next);
   card.appendChild(nav);
@@ -308,9 +310,10 @@ function onFieldChange(blockId, fieldId, value) {
   if (block && container) applyShowIfRules(block, container);
 }
 
-// ─── Lógica de showIf ───────────────────────────
+// ─── Lógica de showIf ───────────────────────────────
 function applyShowIfRules(block, container) {
-  const respBloco = state.respostas[block.id] || {};
+  if (!state.respostas[block.id]) state.respostas[block.id] = {};
+  const respBloco = state.respostas[block.id];
   block.fields.forEach(field => {
     if (!field.showIf) return;
     const el = container.querySelector('[data-field-id="' + field.id + '"]');
@@ -319,7 +322,7 @@ function applyShowIfRules(block, container) {
     el.style.display = visible ? '' : 'none';
     if (!visible) {
       // Limpar valor se ficar invisível
-      delete state.respostas[block.id][field.id];
+      delete respBloco[field.id];
     }
   });
 }
@@ -333,7 +336,7 @@ function evaluateShowIf(rule, resp) {
   return true;
 }
 
-// ─── Validação ──────────────────────────────────
+// ─── Validação ─────────────────────────────────────
 function collectAndValidate(block, container) {
   const errors = [];
   const respBloco = state.respostas[block.id] || {};
@@ -348,7 +351,7 @@ function collectAndValidate(block, container) {
   return errors;
 }
 
-// ─── Submissão final ────────────────────────────
+// ─── Submissão final ───────────────────────────────
 async function submitAll() {
   if (state.isDev) {
     console.log('[DEV] Respostas coletadas:', state.respostas);
@@ -382,7 +385,7 @@ async function submitAll() {
   }
 }
 
-// ─── Telas auxiliares ───────────────────────────
+// ─── Telas auxiliares ────────────────────────────────
 function showError(msg) {
   const root = document.getElementById('app');
   root.innerHTML = '<div class="fp-card fp-error"><h2>Não foi possível abrir esta anamnese</h2><p>' + escapeHtml(msg) + '</p></div>';
@@ -402,7 +405,7 @@ function showSuccess(data) {
     '<p class="fp-muted">Recebida em ' + escapeHtml(formatDate(data.respondidoEm)) + '</p></div>';
 }
 
-// ─── Helpers ────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────
 function escapeHtml(s) {
   return String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
