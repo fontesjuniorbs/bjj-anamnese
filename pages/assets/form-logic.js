@@ -3,13 +3,14 @@
  *
  * Motor de renderização do formulário de anamnese.
  *
- * Versão: 2.0.0 (2026-05-10)
+ * Versão: 2.0.1 (2026-05-16)
  *   - Tela de boas-vindas com nome do aluno antes do questionário
  *   - PAR-Q+ promovido a Bloco 1 com gate estratificado (P1/P2/P3/P6)
  *   - Tela de bloqueio para procurar médico, com escape via "tenho liberação"
  *   - Pré-preenchimento do campo Telefone a partir do cadastro do treinador
  *   - Logging robusto em submitAll (console detalhado, fluxo de erro mais resiliente)
  *   - Modo Clean (estilos definidos em anamnese.html)
+ *   - Fix missing_block: POST final envia aliases de bloco exigidos pelo Worker
  */
 
 import { BLOCKS } from './blocks-config.js';
@@ -27,6 +28,25 @@ const PARQ_GATE_FIELDS = [
   'parq_p3_tontura',
   'parq_p6_musculoesqueletico',
 ];
+
+const SUBMIT_BLOCK_ID = 'final';
+
+function getSubmitBlockAliases(extra = {}) {
+  return {
+    block: extra.block || SUBMIT_BLOCK_ID,
+    bloco: extra.bloco || SUBMIT_BLOCK_ID,
+    blockId: extra.blockId || SUBMIT_BLOCK_ID,
+    section: extra.section || SUBMIT_BLOCK_ID,
+    etapa: extra.etapa || SUBMIT_BLOCK_ID,
+    step: extra.step || SUBMIT_BLOCK_ID,
+    currentBlock: extra.currentBlock || SUBMIT_BLOCK_ID,
+    blocoAtual: extra.blocoAtual || SUBMIT_BLOCK_ID,
+    formBlock: extra.formBlock || SUBMIT_BLOCK_ID,
+    modo: extra.modo || 'anamnese_completa',
+    form: extra.form || 'anamnese',
+    status: extra.status || 'respondida',
+  };
+}
 
 // ─── State global ───────────────────────────────
 const state = {
@@ -511,6 +531,7 @@ function renderMedicoBlock() {
 async function enviarParqBloqueio() {
   if (state.isDev || !state.token) return;
   const payload = {
+    ...getSubmitBlockAliases({ status: 'parq_bloqueado' }),
     respostas: state.respostas,
     parqBlocked: true,
     metadata: {
@@ -554,6 +575,7 @@ async function submitAll() {
   }
 
   const payload = {
+    ...getSubmitBlockAliases({ status: 'respondida' }),
     respostas: state.respostas,
     parqOverride: state.parqOverride,
     metadata: {
